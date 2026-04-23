@@ -283,7 +283,105 @@ int main(void)
   GLFWwindow* window = glfwCreateWindow(800,600, "Cube")
     if(!window)
   {
-    
+    printf("Failed to create window\n");
+    glfwTerminate();
+    return -1;
   }
+
+  glfwMakeContextCurrent(window);
+  glfwSetFramebufferSize(window, framebuffer_size_callback);
+  if (!glafLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+  {
+    printf("Failed to init GLAD \n");
+    glfwDestroyWindow(window);
+    glfwTerminate();
+    return -1;
+  }
+
+  glEnable(GL_DEPTH_TEST);
+
+  const char* vertex_shader_src =
+        "#version 330 core\n"
+        "layout (location = 0) in vec3 aPos;\n"
+        "layout (location = 1) in vec3 aColor;\n"
+        "out vec3 vColor;\n"
+        "uniform mat4 uMVP;\n"
+        "void main() {\n"
+        "    gl_Position = uMVP * vec4(aPos, 1.0);\n"
+        "    vColor = aColor;\n"
+        "}\n";
+
+    const char* fragment_shader_src =
+        "#version 330 core\n"
+        "in vec3 vColor;\n"
+        "out vec4 FragColor;\n"
+        "void main() {\n"
+        "    FragColor = vec4(vColor, 1.0);\n"
+        "}\n";
+
+  GLuint program = create_program(vertex_shader_src,fragment_shader_src);
+  
+  float vertices[] = 
+    {
+        /* back face */
+        -0.5f,-0.5f,-0.5f,  1.0f,0.0f,0.0f,
+         0.5f,-0.5f,-0.5f,  0.0f,1.0f,0.0f,
+         0.5f, 0.5f,-0.5f,  0.0f,0.0f,1.0f,
+         0.5f, 0.5f,-0.5f,  0.0f,0.0f,1.0f,
+        -0.5f, 0.5f,-0.5f,  1.0f,1.0f,0.0f,
+        -0.5f,-0.5f,-0.5f,  1.0f,0.0f,0.0f,
+
+        /* front face */
+        -0.5f,-0.5f, 0.5f,  1.0f,0.0f,1.0f,
+         0.5f,-0.5f, 0.5f,  0.0f,1.0f,1.0f,
+         0.5f, 0.5f, 0.5f,  1.0f,1.0f,1.0f,
+         0.5f, 0.5f, 0.5f,  1.0f,1.0f,1.0f,
+        -0.5f, 0.5f, 0.5f,  0.5f,0.2f,1.0f,
+        -0.5f,-0.5f, 0.5f,  1.0f,0.0f,1.0f,
+
+        /* left face */
+        -0.5f, 0.5f, 0.5f,  1.0f,0.5f,0.2f,
+        -0.5f, 0.5f,-0.5f,  0.2f,0.8f,0.2f,
+        -0.5f,-0.5f,-0.5f,  0.2f,0.2f,0.8f,
+        -0.5f,-0.5f,-0.5f,  0.2f,0.2f,0.8f,
+        -0.5f,-0.5f, 0.5f,  0.8f,0.2f,0.2f,
+        -0.5f, 0.5f, 0.5f,  1.0f,0.5f,0.2f,
+
+        /* right face */
+         0.5f, 0.5f, 0.5f,  0.9f,0.4f,0.1f,
+         0.5f, 0.5f,-0.5f,  0.1f,0.9f,0.4f,
+         0.5f,-0.5f,-0.5f,  0.4f,0.1f,0.9f,
+         0.5f,-0.5f,-0.5f,  0.4f,0.1f,0.9f,
+         0.5f,-0.5f, 0.5f,  0.9f,0.9f,0.1f,
+         0.5f, 0.5f, 0.5f,  0.9f,0.4f,0.1f,
+
+        /* bottom face */
+        -0.5f,-0.5f,-0.5f,  0.3f,0.7f,0.7f,
+         0.5f,-0.5f,-0.5f,  0.7f,0.3f,0.7f,
+         0.5f,-0.5f, 0.5f,  0.7f,0.7f,0.3f,
+         0.5f,-0.5f, 0.5f,  0.7f,0.7f,0.3f,
+        -0.5f,-0.5f, 0.5f,  0.3f,0.7f,0.3f,
+        -0.5f,-0.5f,-0.5f,  0.3f,0.7f,0.7f,
+
+        /* top face */
+        -0.5f, 0.5f,-0.5f,  0.8f,0.2f,0.6f,
+         0.5f, 0.5f,-0.5f,  0.2f,0.8f,0.6f,
+         0.5f, 0.5f, 0.5f,  0.6f,0.2f,0.8f,
+         0.5f, 0.5f, 0.5f,  0.6f,0.2f,0.8f,
+        -0.5f, 0.5f, 0.5f,  0.8f,0.6f,0.2f,
+        -0.5f, 0.5f,-0.5f,  0.8f,0.2f,0.6f
+    };
+
+  GLuint VAO, VBO;
+  glGenVertexArrays(1,&VAO);
+  glGenBuffers(1, &VBO);
+
+  glBindVertexArrays(VAO);
+
+  glBindBuffer(GL_ARRAY_BUFFER, VBO);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+  glVertexAttribPointer(0,3, GL_FLOAT, GL_FALSE, 6 * (int)sizeof(float), (void*)0);
+  
 }
 
