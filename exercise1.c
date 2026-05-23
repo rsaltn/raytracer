@@ -1,11 +1,13 @@
 #include<glad/glad.h>
 #include<GLFW/glfw3.h>
 #include<stdio.h>
+#include<stdlib.h>
+#include<stb_image.h>
 #include<math.h>
 
-void processInput(GLFWwindow* window);
+void processInput(GLFWwindow* window, float* XoffSet, float* YoffSet);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-
+char *load_shader_source(const char* filepath);
 
 
 int main()
@@ -38,7 +40,6 @@ int main()
   glViewport(0,0, W_WIDTH, W_HEIGHT);
 
   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
   float vertices1[] =
   {
     -0.6f,0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
@@ -52,15 +53,7 @@ int main()
     0.6f,0.5f,0.0f, 0.0f, 1.0f, 0.0f,
     0.6f,-0.5f, 0.0f, 0.0f, 0.0f, 1.0f
   };
-  const char* vertexShaderSource = "#version 330 core\n"
-      "layout (location = 0) in vec3 aPos;\n"
-      "layout (location = 1) in vec3 aColor;\n"
-      "out vec3 color;\n"
-      "void main()\n"
-      "{\n"
-      "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0f);\n"
-      "   color = aColor;\n"
-      "}";
+  const char* vertexShaderSource = load_shader_source("/home/saltn/Horizon_NDF/exercise1Shader.vs");
 
   unsigned int vertexShader;
   
@@ -78,13 +71,7 @@ int main()
     }
 
 
-  const char* fragmentShaderSource = "#version 330 core\n"
-      "out vec4 FragColor;\n"
-      "in vec3 color;"
-      "void main()\n"
-      "{\n"
-      "   FragColor = vec4(color.x, color.y, color.z, 1.0f);\n"
-      "}";
+  const char* fragmentShaderSource = load_shader_source("/home/saltn/Horizon_NDF/exercise1Shader.fs");
 
   unsigned int fragmentShader;
   fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -173,24 +160,37 @@ int main()
   glEnableVertexAttribArray(1);
 
   
+    float XoffSet = 0.0f;
+    float YoffSet = 0.0f;
 
   while(!glfwWindowShouldClose(window))
   {
     glClearColor(0.0f,0.0f,0.0f,0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    processInput(window);
+    processInput(window, &XoffSet, &YoffSet);
 
-    glUseProgram(shaderProgram);
-    
   
-    glBindVertexArray(VAO[0]);
-    
-    glDrawArrays(GL_TRIANGLES,0, 3);
-    
-    glBindVertexArray(VAO[1]);
 
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    float offsets[] = {
+        XoffSet,
+        XoffSet - 2.0f,
+        XoffSet + 2.0f
+    };
+    glUseProgram(shaderProgram);
+    int YUniLoc = glGetUniformLocation(shaderProgram, "YoffSet");
+    int XUniLoc = glGetUniformLocation(shaderProgram, "XoffSet");
+    for(int i = 0; i < 3; i++)
+    {
+        glUniform1f(XUniLoc, offsets[i]);
+        glUniform1f(YUniLoc, YoffSet);
+
+        glBindVertexArray(VAO[0]);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        glBindVertexArray(VAO[1]);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+    }
 
     glfwSwapBuffers(window);
     glfwPollEvents();
@@ -207,11 +207,55 @@ int main()
   return 0;
 }
 
-void processInput(GLFWwindow* window)
+char *load_shader_source(const char *filepath)
+{
+  FILE *file = fopen(filepath, "rb");
+  if(!file)
+  {
+    fprintf(stderr, "Failed to open shader source: %s\n", filepath);
+    return NULL;
+  }
+  fseek(file, 0, SEEK_END);
+  long length = ftell(file);
+  rewind(file);
+
+  char *source = malloc(length + 1);
+
+  if(!source)
+  {
+    fprintf(stderr, "Failed to allocate memory for source");
+    fclose(file);
+    return NULL;
+  }
+
+  size_t read_size = fread(source, 1 , length, file);
+  source[read_size] = '\0';
+
+  fclose(file);
+  return source;
+}
+
+void processInput(GLFWwindow* window, float* XoffSet, float* YoffSet)
 {
   if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
   {
     glfwSetWindowShouldClose(window, true);
+  }
+  if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+  {
+    *YoffSet += 0.001f;
+  }
+  if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+  {
+    *XoffSet -= 0.001f;
+  }
+  if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+  {
+    *YoffSet -= 0.001f;
+  }
+  if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+  {
+    *XoffSet += 0.001f;
   }
 }
 
