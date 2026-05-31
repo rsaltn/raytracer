@@ -1,9 +1,13 @@
-/home/saltn/Horizon_NDF/app
-/home/saltn/Horizon_NDF/exercise1.c
-/home/saltn/Horizon_NDF/exercise1Shader.fs
-/home/saltn/Horizon_NDF/exercise1Shader.vs
-/home/saltn/Horizon_NDF/preload.cpp
-/home/saltn/Horizon_NDF/shad.vert
-/home/saltn/Horizon_NDF/stb_image.h
-/home/saltn/Horizon_NDF/README.md
-/home/saltn/Horizon_NDF/src
+# Compiled binary
+app
+
+# Old test/source files you do not want tracked
+exercise1.c
+exercise1Shader.fs
+exercise1Shader.vs
+preload.cpp
+shad.vert
+stb_image.h
+
+# If you want to ignore the whole src folder
+src/
