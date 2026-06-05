@@ -1,8 +1,8 @@
 Requirements:
-Linux or Unix like OS(i just hope it works on other devices)
-openGL
-glad
-GLFW
+Linux or Unix like OS(i just hope it works on other devices),
+OpenGL,
+glad,
+GLFW,
 gcc or any other C compiler, up to you, but how to compile this you will have to figure out yourself
 
 How to compile

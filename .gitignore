@@ -8,6 +8,6 @@ exercise1Shader.vs
 preload.cpp
 shad.vert
 stb_image.h
-
+passwords.txt
 # If you want to ignore the whole src folder
 src/
