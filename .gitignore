@@ -1,5 +1,6 @@
 # Compiled binary
 app
+check
 
 # Old test/source files you do not want tracked
 exercise1.c
@@ -9,5 +10,6 @@ preload.cpp
 shad.vert
 stb_image.h
 passwords.txt
+check.c
 # If you want to ignore the whole src folder
 src/
