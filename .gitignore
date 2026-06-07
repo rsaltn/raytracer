@@ -2,7 +2,7 @@
 app
 check
 
-# Old test/source files you do not want tracked
+# Old test/source files I do not want tracked
 exercise1.c
 exercise1Shader.fs
 exercise1Shader.vs
@@ -11,5 +11,5 @@ shad.vert
 stb_image.h
 passwords.txt
 check.c
-# If you want to ignore the whole src folder
 src/
+.gitignore
